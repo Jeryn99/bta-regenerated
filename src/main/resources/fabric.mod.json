@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "regenerated",
+  "version": "${version}",
+
+  "name": "BTA: Regenerated",
+  "description": "Experience the thrill of regeneration with BTA: Regenerated, a Minecraft mod that lets players defy mortality and unlock unparalleled survival capabilities, just like a Timelord.",
+  "authors": [
+    "Jeryn99"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/project/bta-regenerated",
+    "sources": "https://github.com/Jeryn99/bta-regenerated"
+  },
+
+  "icon": "icon.png",
+  "license": "CC0-1.0",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+			"mc.jeryn.dev.regen.bta.Regeneration"
+    ],
+    "beforeGameStart": [
+			"mc.jeryn.dev.regen.bta.Regeneration"
+    ],
+    "afterGameStart": [
+			"mc.jeryn.dev.regen.bta.Regeneration"
+    ],
+    "recipesReady": [
+			"mc.jeryn.dev.regen.bta.Regeneration"
+    ]
+  },
+  "mixins": [
+    "regenerated.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.15.5"
+  }
+}
