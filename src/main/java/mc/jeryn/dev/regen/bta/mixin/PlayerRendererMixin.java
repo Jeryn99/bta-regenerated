@@ -1,11 +1,11 @@
 package mc.jeryn.dev.regen.bta.mixin;
 
-import mc.jeryn.dev.regen.bta.RegenConfig;
 import mc.jeryn.dev.regen.bta.Regeneration;
 import mc.jeryn.dev.regen.bta.access.ModelPlayerAccess;
 import mc.jeryn.dev.regen.bta.access.RegenerationDataAccess;
 import mc.jeryn.dev.regen.bta.client.RenderRegenerationLayer;
 import net.minecraft.client.render.entity.PlayerRenderer;
+import net.minecraft.client.render.model.ModelBiped;
 import net.minecraft.client.render.model.ModelPlayer;
 import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.util.helper.GetSkinUrlThread;
@@ -30,6 +30,14 @@ public abstract class PlayerRendererMixin {
 	@Shadow
 	public abstract void loadEntityTexture(EntityPlayer entity);
 
+	@Shadow
+	@Final
+	private ModelBiped modelArmor;
+	@Shadow
+	private ModelBiped modelBipedMain;
+	@Shadow
+	@Final
+	private ModelBiped modelArmorChestplate;
 	GetSkinUrlThread THREAD;
 
 
@@ -37,12 +45,7 @@ public abstract class PlayerRendererMixin {
 	public void render(EntityPlayer entity, float partialTick, CallbackInfo ci) {
 		RegenerationDataAccess playerRegenData = (RegenerationDataAccess) entity;
 
-		ModelPlayerAccess modelPlayerAccessSlim = (ModelPlayerAccess) modelSlim;
-		modelPlayerAccessSlim.setPlayer(entity);
-
-		ModelPlayerAccess modelPlayerAccessThick = (ModelPlayerAccess) modelThick;
-		modelPlayerAccessThick.setPlayer(entity);
-
+		updateModelReference(entity);
 
 		if(Regeneration.regenConfig.isAllowSkinChanging()) {
 			if (!playerRegenData.getSkin().isEmpty()) {
@@ -65,6 +68,23 @@ public abstract class PlayerRendererMixin {
 
 
 		RenderRegenerationLayer.renderSpecials(entity.slimModel ? this.modelSlim : this.modelThick, entity, partialTick);
+	}
+
+	private void updateModelReference(EntityPlayer entity) {
+		ModelPlayerAccess modelPlayerAccessSlim = (ModelPlayerAccess) modelSlim;
+		modelPlayerAccessSlim.setLivingEntity(entity);
+
+		ModelPlayerAccess modelPlayerAccessThick = (ModelPlayerAccess) modelThick;
+		modelPlayerAccessThick.setLivingEntity(entity);
+
+		ModelPlayerAccess modelArmorAccess = (ModelPlayerAccess) modelArmor;
+		modelArmorAccess.setLivingEntity(entity);
+
+		ModelPlayerAccess modelBipedMainAccess = (ModelPlayerAccess) modelBipedMain;
+		modelBipedMainAccess.setLivingEntity(entity);
+
+		ModelPlayerAccess modelArmorChestplateAccess = (ModelPlayerAccess) modelArmorChestplate;
+		modelArmorChestplateAccess.setLivingEntity(entity);
 	}
 
 

@@ -23,10 +23,15 @@ public abstract class EntityPlayerMixin implements RegenerationDataAccess {
 	@Unique
 	private final EntityPlayer thisAs = (EntityPlayer) ((Object) this);
 
+	@Unique
 	int regenerationTicksElapsed = -1;
-	int regensLeft = 12;
+	@Unique
+	int regensLeft = 0;
+	@Unique
 	String skin = "";
+	@Unique
 	final int REGEN_DURATION = 200;
+	@Unique
 	boolean isSlim = false;
 
 	@Override

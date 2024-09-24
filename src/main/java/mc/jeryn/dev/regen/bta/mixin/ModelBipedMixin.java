@@ -2,6 +2,7 @@ package mc.jeryn.dev.regen.bta.mixin;
 
 import mc.jeryn.dev.regen.bta.access.ModelPlayerAccess;
 import mc.jeryn.dev.regen.bta.access.RegenerationDataAccess;
+import net.minecraft.client.render.model.ModelBiped;
 import net.minecraft.client.render.model.ModelPlayer;
 import net.minecraft.core.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,29 +13,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static mc.jeryn.dev.regen.bta.Regeneration.MASTER_RANDOM;
 import static net.minecraft.client.render.model.ModelPlayer.func_178685_a;
 
-@Mixin(ModelPlayer.class)
+@Mixin({ModelPlayer.class, ModelBiped.class})
 public class ModelBipedMixin implements ModelPlayerAccess {
 
 	private EntityPlayer player;
 
 
 	@Override
-	public void setPlayer(EntityPlayer player) {
+	public void setLivingEntity(EntityPlayer player) {
 		this.player = player;
 	}
 
 	@Override
-	public EntityPlayer getPlayer() {
+	public EntityPlayer getLivingEntity() {
 		return player;
 	}
 
-	private final ModelPlayer thisAs = (ModelPlayer) ((Object) this);
+	private final ModelBiped thisAs = (ModelBiped) ((Object) this);
 
 
 	@Inject(method = "setRotationAngles(FFFFFF)V", at = @At("HEAD"), cancellable = true, remap = false)
 	public void setRotationAngles(float limbSwing, float limbYaw, float limbPitch, float headYaw, float headPitch, float scale, CallbackInfo ci) {
 
-		RegenerationDataAccess playerRegenData = (RegenerationDataAccess) getPlayer();
+		RegenerationDataAccess playerRegenData = (RegenerationDataAccess) getLivingEntity();
 
 		if (playerRegenData != null && playerRegenData.getRegenerationTicksElapsed() > 0) {
 			double armShake = MASTER_RANDOM.nextDouble();
@@ -96,12 +97,16 @@ public class ModelBipedMixin implements ModelPlayerAccess {
 		}
 	}
 
+
 	private void copyAll() {
-		func_178685_a(thisAs.bipedLeftLeg, thisAs.bipedLeftLegOverlay);
-		func_178685_a(thisAs.bipedRightLeg, thisAs.bipedRightLegOverlay);
-		func_178685_a(thisAs.bipedLeftArm, thisAs.bipedLeftArmOverlay);
-		func_178685_a(thisAs.bipedRightArm, thisAs.bipedRightArmOverlay);
-		func_178685_a(thisAs.bipedBody, thisAs.bipedBodyOverlay);
+		if(thisAs instanceof ModelPlayer) {
+			ModelPlayer modelPlayer = (ModelPlayer) thisAs;
+			func_178685_a(thisAs.bipedLeftLeg, modelPlayer.bipedLeftLegOverlay);
+			func_178685_a(thisAs.bipedRightLeg, modelPlayer.bipedRightLegOverlay);
+			func_178685_a(thisAs.bipedLeftArm, modelPlayer.bipedLeftArmOverlay);
+			func_178685_a(thisAs.bipedRightArm, modelPlayer.bipedRightArmOverlay);
+			func_178685_a(thisAs.bipedBody, modelPlayer.bipedBodyOverlay);
+		}
 		func_178685_a(thisAs.bipedHead, thisAs.bipedHeadOverlay);
 	}
 
